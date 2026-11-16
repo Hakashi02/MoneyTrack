@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MoneyTrack - Controle Financeiro</title>
+
+    <link rel="stylesheet" href="estilo.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>MoneyTrack</h1>
+        <p>Seu controle financeiro pessoal</p>
+    </header>
+
+    <main>
+
+        <h2>Meu painel financeiro</h2>
+
+        <!-- Resumo financeiro -->
+        <section class="resumo">
+
+            <div class="card">
+                <h3>Saldo total</h3>
+                <p>R$ 0,00</p>
+            </div>
+
+            <div class="card">
+                <h3>Entradas</h3>
+                <p>R$ 0,00</p>
+            </div>
+
+            <div class="card">
+                <h3>Despesas</h3>
+                <p>R$ 0,00</p>
+            </div>
+
+        </section>
+
+        <!-- Adicionar movimentação -->
+        <section class="movimentacoes">
+
+            <h2>Adicionar movimentação</h2>
+
+            <input
+                type="text"
+                id="descricao"
+                placeholder="Descrição"
+            >
+
+            <input
+                type="text"
+                id="valor"
+                placeholder="Valor (R$)"
+                inputmode="decimal"
+            >
+
+            <select id="tipo">
+                <option value="entrada">Entrada</option>
+                <option value="despesa">Despesa</option>
+            </select>
+
+            <button onclick="adicionarMovimentacao()">
+                Adicionar
+            </button>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
