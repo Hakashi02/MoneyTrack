@@ -1,79 +1,126 @@
 
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>MoneyTrack - Controle Financeiro</title>
-
-    <link rel="stylesheet" href="estilo.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyTrack</title>
+  <link rel="stylesheet" href="Estilo.css">
 </head>
-
 <body>
 
-    <header>
-        <h1>MoneyTrack</h1>
-        <p>Seu controle financeiro pessoal</p>
+  <main id="authView" class="auth-shell">
+    <section class="auth-card">
+
+      <div class="brand-mark">M</div>
+      <h1>MoneyTrack</h1>
+      <p class="auth-description">Organize sua vida financeira com inteligência.</p>
+
+      <div class="auth-tabs">
+        <button type="button" id="tabLogin" class="auth-tab active">Entrar</button>
+        <button type="button" id="tabCadastro" class="auth-tab">Criar conta</button>
+      </div>
+
+      <form id="authForm">
+        <div id="nomeWrap" class="field hidden">
+          <label for="nomeConta">Nome completo</label>
+          <input type="text" id="nomeConta" placeholder="Digite seu nome" autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" placeholder="Digite sua senha" minlength="6" required>
+        </div>
+
+        <div id="confirmarSenhaWrap" class="field hidden">
+          <label for="confirmarSenha">Confirmar senha</label>
+          <input type="password" id="confirmarSenha" placeholder="Digite a senha novamente" minlength="6">
+        </div>
+
+        <button type="submit" id="authSubmit" class="primary">Entrar na minha conta</button>
+        <p id="authMessage" class="message" role="status"></p>
+      </form>
+
+      <div class="login-divider"><span>OU CONTINUE COM</span></div>
+
+      <button type="button" id="googleLogin" class="social-btn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
+        Continuar com Google
+      </button>
+
+      <button type="button" id="appleLogin" class="social-btn">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v14/icons/apple.svg" alt="">
+        Continuar com Apple
+      </button>
+
+      <p class="auth-footer">
+        <span id="authFooterText">Ainda não tem uma conta?</span>
+        <button type="button" id="footerToggle">Criar conta</button>
+      </p>
+
+    </section>
+  </main>
+
+  <main id="appView" class="hidden">
+    <header class="topbar">
+      <h1>MoneyTrack</h1>
+      <div>
+        <span id="userLabel"></span>
+        <button type="button" id="logoutBtn">Sair</button>
+      </div>
     </header>
 
-    <main>
+    <section class="container">
+      <div class="panel">
+        <h2>Resumo financeiro</h2>
+        <label for="periodo">Período</label>
+        <select id="periodo">
+          <option value="dia">Dia</option>
+          <option value="mes" selected>Mês</option>
+          <option value="ano">Ano</option>
+        </select>
+        <label for="salario">Salário</label>
+        <input type="number" id="salario" placeholder="0,00">
+        <button type="button" id="saveSalary">Salvar salário</button>
+      </div>
 
-        <h2>Meu painel financeiro</h2>
+      <div class="summary-grid">
+        <div class="panel"><h3>Salário</h3><p id="valorSalario">R$ 0,00</p></div>
+        <div class="panel"><h3>Total pago</h3><p id="totalPago">R$ 0,00</p></div>
+        <div class="panel"><h3>Total pendente</h3><p id="totalPendente">R$ 0,00</p></div>
+        <div class="panel"><h3>Saldo restante</h3><p id="saldoRestante">R$ 0,00</p></div>
+      </div>
 
-        <!-- Resumo financeiro -->
-        <section class="resumo">
+      <nav class="app-tabs">
+        <button type="button" id="abaDespesas">Despesas</button>
+        <button type="button" id="abaParcelas">Parcelas</button>
+        <button type="button" id="abaPrevisao">Previsão</button>
+      </nav>
 
-            <div class="card">
-                <h3>Saldo total</h3>
-                <p>R$ 0,00</p>
-            </div>
+      <section id="painelDespesas" class="panel">
+        <h2>Despesas</h2>
+        <div id="listaDespesas"></div>
+      </section>
 
-            <div class="card">
-                <h3>Entradas</h3>
-                <p>R$ 0,00</p>
-            </div>
+      <section id="painelParcelas" class="panel hidden">
+        <h2>Parcelas</h2>
+        <div id="listaParcelas"></div>
+      </section>
 
-            <div class="card">
-                <h3>Despesas</h3>
-                <p>R$ 0,00</p>
-            </div>
+      <section id="painelPrevisao" class="panel hidden">
+        <h2>Previsão financeira</h2>
+        <div id="listaPrevisao"></div>
+      </section>
+    </section>
+  </main>
 
-        </section>
-
-        <!-- Adicionar movimentação -->
-        <section class="movimentacoes">
-
-            <h2>Adicionar movimentação</h2>
-
-            <input
-                type="text"
-                id="descricao"
-                placeholder="Descrição"
-            >
-
-            <input
-                type="text"
-                id="valor"
-                placeholder="Valor (R$)"
-                inputmode="decimal"
-            >
-
-            <select id="tipo">
-                <option value="entrada">Entrada</option>
-                <option value="despesa">Despesa</option>
-            </select>
-
-            <button onclick="adicionarMovimentacao()">
-                Adicionar
-            </button>
-
-        </section>
-
-    </main>
-
-    <script src="script.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="Config.js"></script>
+  <script src="JScript.js"></script>
 </body>
 </html>
