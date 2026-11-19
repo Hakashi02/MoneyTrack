@@ -1,0 +1,112 @@
+.finance-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.finance-form input,
+.finance-form select {
+    flex: 1;
+    min-width: 150px;
+    background: #0b1220;
+    border: 1px solid #334155;
+    border-radius: 9px;
+    padding: 14px;
+    color: #f8fafc;
+    outline: none;
+}
+
+.finance-form input:focus,
+.finance-form select:focus {
+    border-color: #818cf8;
+}
+
+.finance-form button {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    border-radius: 9px;
+    padding: 14px 20px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.finance-form button:hover {
+    opacity: 0.85;
+}
+
+.finance-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.finance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 17px;
+    background: #1a2940;
+    border: 1px solid #2c3d56;
+    border-radius: 11px;
+}
+
+.finance-item h3 {
+    margin: 0 0 5px;
+    color: #f8fafc;
+}
+
+.finance-item p {
+    margin: 0;
+    color: #94a3b8;
+}
+
+.finance-item .valor {
+    color: #f87171;
+    font-weight: bold;
+}
+
+.finance-item .pago {
+    color: #4ade80;
+}
+
+.finance-item button {
+    background: #7f1d1d;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 9px 13px;
+    cursor: pointer;
+}
+
+.installment-card {
+    background: #1a2940;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+}
+
+.installment-card h3 {
+    margin-top: 0;
+}
+
+@media(max-width: 600px) {
+    .finance-form {
+        flex-direction: column;
+    }
+
+    .finance-form input,
+    .finance-form select,
+    .finance-form button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .finance-item {
+        flex-wrap: wrap;
+    }
+}
