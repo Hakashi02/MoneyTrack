@@ -1,3 +1,4 @@
+
 (() => {
   "use strict";
 
@@ -183,13 +184,16 @@
     return String(dateString || "").slice(0, 7);
   }
 
-  // Somente despesas comuns entram no cálculo da renda mensal.
-  // Parcelamentos são controlados separadamente no limite de crédito.
+  // Desconta as despesas pendentes da renda mensal.
+  // Quando uma despesa é marcada como paga, ela deixa de ser descontada.
   function currentMonthExpenses() {
     const month = monthKey(today());
 
     return data.expenses
-      .filter(item => monthKey(item.date || item.data) === month)
+      .filter(item =>
+        monthKey(item.date || item.data) === month &&
+        !(item.paid === true || item.paid === "true" || item.paid === 1)
+      )
       .reduce(
         (sum, item) => sum + number(item.amount ?? item.valor),
         0
