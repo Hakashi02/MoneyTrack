@@ -1,9 +1,25 @@
-
 (() => {
   "use strict";
 
   const $ = (id) => document.getElementById(id);
   const STORAGE_KEY = "moneytrack_painel_v2";
+
+  const ITEM_COLORS = [
+    "#ec4899",
+    "#a855f7",
+    "#facc15",
+    "#3b82f6",
+    "#22c55e",
+    "#f97316",
+    "#06b6d4",
+    "#e11d48",
+    "#84cc16",
+    "#8b5cf6",
+    "#14b8a6",
+    "#f59e0b",
+    "#6366f1",
+    "#d946ef"
+  ];
 
   const money = (value) =>
     Number(value || 0).toLocaleString("pt-BR", {
@@ -33,6 +49,56 @@
     expenses: [],
     products: []
   });
+
+  function colorForItem(item, index) {
+    const key = String(
+      item.id || item.name || item.nome || `item-${index}`
+    );
+
+    let hash = 0;
+
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+    }
+
+    return ITEM_COLORS[hash % ITEM_COLORS.length];
+  }
+
+  function ensureColors() {
+    let changed = false;
+
+    data.expenses.forEach((item, index) => {
+      if (!item.id) {
+        item.id = uid();
+        changed = true;
+      }
+
+      if (!item.color) {
+        item.color = colorForItem(item, index);
+        changed = true;
+      }
+    });
+
+    data.products.forEach((product, index) => {
+      if (!product.id) {
+        product.id = uid();
+        changed = true;
+      }
+
+      if (!product.color) {
+        product.color = colorForItem(product, index + data.expenses.length);
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (error) {
+        console.warn("Não foi possível salvar as cores dos itens:", error);
+      }
+    }
+  }
 
   function normalizeProduct(product) {
     const count = Math.max(
@@ -184,44 +250,77 @@
     return String(dateString || "").slice(0, 7);
   }
 
-  // Desconta as despesas pendentes da renda mensal.
-  // Quando uma despesa é marcada como paga, ela deixa de ser descontada.
+  // Considera somente despesas normais do mês.
+  // Parcelamentos não entram no salário nem no saldo restante.
+  // O status pago/pendente não altera o valor contabilizado.
   function currentMonthExpenses() {
     const month = monthKey(today());
 
+    return data.expenses.reduce((sum, item) => {
+      if (monthKey(item.date || item.data) !== month) {
+        return sum;
+      }
+
+      return sum + number(item.amount ?? item.valor);
+    }, 0);
+  }
+
+  // Retorna somente as despesas normais para desenhar o gráfico salarial.
+  function currentMonthExpenseItems() {
+    const month = monthKey(today());
+
     return data.expenses
-      .filter(item =>
-        monthKey(item.date || item.data) === month &&
-        !(item.paid === true || item.paid === "true" || item.paid === 1)
-      )
-      .reduce(
-        (sum, item) => sum + number(item.amount ?? item.valor),
-        0
-      );
+      .filter(item => monthKey(item.date || item.data) === month)
+      .map(item => ({
+        name: item.name || item.nome || "Despesa",
+        amount: number(item.amount ?? item.valor),
+        color: item.color || "#f97316"
+      }));
   }
 
   function setText(id, value) {
     if ($(id)) $(id).textContent = value;
   }
 
+  // Gráfico salarial: somente salário, despesas normais e saldo restante.
   function updateChart(expenses, balance) {
     const chart = $("graficoFinanceiro");
     if (!chart) return;
 
     const salary = Math.max(0, data.salary);
     const spent = Math.max(0, expenses);
+    const items = currentMonthExpenseItems();
 
     if (salary <= 0) {
       chart.style.background = "#334155";
+    } else if (spent <= 0) {
+      chart.style.background = "#22c55e";
     } else {
       const spentPercent = Math.min(100, spent / salary * 100);
+      let currentPercent = 0;
+      const gradientParts = [];
 
-      chart.style.background = `
-        conic-gradient(
-          #f97316 0% ${spentPercent}%,
-          #22c55e ${spentPercent}% 100%
-        )
-      `;
+      items.forEach(item => {
+        const itemPercent = spentPercent * (item.amount / spent);
+
+        if (itemPercent <= 0) return;
+
+        const nextPercent = currentPercent + itemPercent;
+
+        gradientParts.push(
+          `${item.color} ${currentPercent}% ${nextPercent}%`
+        );
+
+        currentPercent = nextPercent;
+      });
+
+      if (currentPercent < 100) {
+        gradientParts.push(
+          `#22c55e ${currentPercent}% 100%`
+        );
+      }
+
+      chart.style.background = `conic-gradient(${gradientParts.join(", ")})`;
     }
 
     setText("graficoSaldo", money(balance));
@@ -239,6 +338,37 @@
     return node;
   }
 
+  // Legenda exclusiva dos produtos parcelados no gráfico de crédito.
+  function renderCreditLegend() {
+    const legend = $("legendaProdutosCredito");
+    if (!legend) return;
+
+    legend.replaceChildren();
+
+    data.products.forEach(product => {
+      const used = productCreditUsed(product);
+
+      if (used <= 0) return;
+
+      const row = element("li");
+      const dot = element("span", "chart-item-dot");
+
+      dot.style.backgroundColor = product.color || "#a855f7";
+
+      const name = element(
+        "span",
+        "",
+        product.name || product.nome || "Compra"
+      );
+
+      const amount = element("strong", "", money(used));
+
+      row.append(dot, name, amount);
+      legend.append(row);
+    });
+  }
+
+  // Gráfico de crédito: somente limite, produtos parcelados e disponível.
   function renderCredit() {
     const used = totalCreditUsed();
     const available = data.creditLimit - used;
@@ -254,21 +384,59 @@
     setText("legendaCreditoUtilizado", money(used));
     setText("legendaCreditoDisponivel", money(safeAvailable));
 
+    renderCreditLegend();
+
     if (chart) {
       if (data.creditLimit <= 0) {
         chart.style.background = "#334155";
       } else {
-        const usedPercent = Math.min(
-          100,
-          used / data.creditLimit * 100
-        );
+        const gradientParts = [];
+        let currentPercent = 0;
 
-        chart.style.background = `
-          conic-gradient(
-            #f97316 0% ${usedPercent}%,
-            #22c55e ${usedPercent}% 100%
-          )
-        `;
+        const productsWithCredit = data.products
+          .map(product => ({
+            product,
+            amount: productCreditUsed(product)
+          }))
+          .filter(item => item.amount > 0);
+
+        productsWithCredit.forEach(item => {
+          let itemPercent;
+
+          if (used > data.creditLimit) {
+            // Se ultrapassar o limite, os produtos ocupam toda a rodinha.
+            itemPercent = item.amount / used * 100;
+          } else {
+            itemPercent = item.amount / data.creditLimit * 100;
+          }
+
+          if (itemPercent <= 0) return;
+
+          const nextPercent = Math.min(
+            100,
+            currentPercent + itemPercent
+          );
+
+          gradientParts.push(
+            `${item.product.color || "#a855f7"} ${currentPercent}% ${nextPercent}%`
+          );
+
+          currentPercent = nextPercent;
+        });
+
+        if (available > 0 && currentPercent < 100) {
+          gradientParts.push(
+            `#22c55e ${currentPercent}% 100%`
+          );
+        } else if (currentPercent < 100) {
+          gradientParts.push(
+            `#334155 ${currentPercent}% 100%`
+          );
+        }
+
+        chart.style.background = gradientParts.length
+          ? `conic-gradient(${gradientParts.join(", ")})`
+          : "#22c55e";
       }
     }
 
@@ -304,6 +472,8 @@
       )
       .forEach(item => {
         const row = element("article", "finance-item");
+        row.style.borderLeft = `4px solid ${item.color}`;
+
         const info = element("div");
 
         info.append(
@@ -374,6 +544,7 @@
       const totalValue = amounts.reduce((sum, amount) => sum + amount, 0);
 
       const card = element("article", "installment-card");
+      card.style.borderLeft = `4px solid ${product.color}`;
 
       card.append(
         element("h3", "", product.name || product.nome || "Compra"),
@@ -414,6 +585,7 @@
           "div",
           `individual-installment${isPaid ? " installment-is-paid" : ""}`
         );
+        installmentRow.style.borderLeft = `4px solid ${product.color}`;
 
         const details = element("div", "individual-installment-details");
 
@@ -496,6 +668,8 @@
   }
 
   function render() {
+    ensureColors();
+
     const expenses = currentMonthExpenses();
     const balance = data.salary - expenses;
 
@@ -577,12 +751,15 @@
         return;
       }
 
+      const id = uid();
+
       data.expenses.push({
-        id: uid(),
+        id,
         name,
         amount,
         date,
-        paid: false
+        paid: false,
+        color: colorForItem({ id, name }, data.expenses.length)
       });
 
       $("expenseForm").reset();
@@ -636,15 +813,18 @@
         return;
       }
 
+      const id = uid();
+
       data.products.push({
-        id: uid(),
+        id,
         name,
         totalValue: Math.round(totalValue * 100) / 100,
         count,
         installmentValue: Math.round(totalValue / count * 100) / 100,
         firstDate,
         paidCount: 0,
-        paidInstallments: Array(count).fill(false)
+        paidInstallments: Array(count).fill(false),
+        color: colorForItem({ id, name }, data.products.length + data.expenses.length)
       });
 
       $("installmentForm").reset();
@@ -661,6 +841,8 @@
   }
 
   function init() {
+    ensureColors();
+
     if ($("salario")) $("salario").value = data.salary || "";
     if ($("limiteCredito")) $("limiteCredito").value = data.creditLimit || "";
     if ($("dataDespesa")) $("dataDespesa").value = today();
