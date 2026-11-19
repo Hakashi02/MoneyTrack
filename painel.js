@@ -1,3 +1,4 @@
+
 (() => {
   "use strict";
 
@@ -230,6 +231,12 @@
     );
   }
 
+  // Retorna o valor total original da compra, sem descontar parcelas pagas.
+  function productTotalSpent(product) {
+    return number(product.totalValue ?? product.valorTotal);
+  }
+
+  // Calcula somente o valor que ainda está comprometendo o crédito.
   function productCreditUsed(product) {
     const total = number(product.totalValue ?? product.valorTotal);
 
@@ -241,7 +248,23 @@
 
   function totalCreditUsed() {
     return data.products.reduce(
-      (sum, product) => sum + productCreditUsed(product),
+      (sum, product) => sum + productTotalSpent(product),
+      0
+    );
+  }
+
+  // Soma o valor original de todas as compras, mesmo as já pagas.
+  function totalProductsSpent() {
+    return data.products.reduce(
+      (sum, product) => sum + productTotalSpent(product),
+      0
+    );
+  }
+
+  // Soma o valor de todas as parcelas efetivamente pagas.
+  function totalProductsPaid() {
+    return data.products.reduce(
+      (sum, product) => sum + productPaidAmount(product),
       0
     );
   }
@@ -338,39 +361,20 @@
     return node;
   }
 
-  // Legenda exclusiva dos produtos parcelados no gráfico de crédito.
+  // Mantém a função, mas não exibe a lista de produtos entre as legendas.
   function renderCreditLegend() {
     const legend = $("legendaProdutosCredito");
     if (!legend) return;
 
     legend.replaceChildren();
-
-    data.products.forEach(product => {
-      const used = productCreditUsed(product);
-
-      if (used <= 0) return;
-
-      const row = element("li");
-      const dot = element("span", "chart-item-dot");
-
-      dot.style.backgroundColor = product.color || "#a855f7";
-
-      const name = element(
-        "span",
-        "",
-        product.name || product.nome || "Compra"
-      );
-
-      const amount = element("strong", "", money(used));
-
-      row.append(dot, name, amount);
-      legend.append(row);
-    });
+    legend.hidden = true;
   }
 
-  // Gráfico de crédito: somente limite, produtos parcelados e disponível.
+  // Gráfico de crédito: mostra o histórico total das compras e o crédito disponível.
   function renderCredit() {
     const used = totalCreditUsed();
+    const totalSpent = totalProductsSpent();
+    const totalPaid = totalProductsPaid();
     const available = data.creditLimit - used;
 
     const safeAvailable = Math.max(0, available);
@@ -381,13 +385,16 @@
     setText("creditoDisponivel", money(safeAvailable));
 
     setText("graficoCreditoSaldo", money(safeAvailable));
-    setText("legendaCreditoUtilizado", money(used));
+    setText("legendaCreditoUtilizado", money(totalSpent));
+    setText("legendaCreditoPago", money(totalPaid));
     setText("legendaCreditoDisponivel", money(safeAvailable));
 
     renderCreditLegend();
 
     if (chart) {
-      if (data.creditLimit <= 0) {
+      const totalForChart = totalSpent + safeAvailable;
+
+      if (totalForChart <= 0) {
         chart.style.background = "#334155";
       } else {
         const gradientParts = [];
@@ -396,26 +403,16 @@
         const productsWithCredit = data.products
           .map(product => ({
             product,
-            amount: productCreditUsed(product)
+            amount: productTotalSpent(product)
           }))
           .filter(item => item.amount > 0);
 
         productsWithCredit.forEach(item => {
-          let itemPercent;
-
-          if (used > data.creditLimit) {
-            // Se ultrapassar o limite, os produtos ocupam toda a rodinha.
-            itemPercent = item.amount / used * 100;
-          } else {
-            itemPercent = item.amount / data.creditLimit * 100;
-          }
+          const itemPercent = item.amount / totalForChart * 100;
 
           if (itemPercent <= 0) return;
 
-          const nextPercent = Math.min(
-            100,
-            currentPercent + itemPercent
-          );
+          const nextPercent = currentPercent + itemPercent;
 
           gradientParts.push(
             `${item.product.color || "#a855f7"} ${currentPercent}% ${nextPercent}%`
@@ -424,13 +421,9 @@
           currentPercent = nextPercent;
         });
 
-        if (available > 0 && currentPercent < 100) {
+        if (safeAvailable > 0 && currentPercent < 100) {
           gradientParts.push(
             `#22c55e ${currentPercent}% 100%`
-          );
-        } else if (currentPercent < 100) {
-          gradientParts.push(
-            `#334155 ${currentPercent}% 100%`
           );
         }
 
@@ -503,8 +496,6 @@
         const remove = element("button", "btn-delete", "Excluir");
         remove.type = "button";
         remove.addEventListener("click", () => {
-          if (!confirm("Excluir esta despesa?")) return;
-
           data.expenses = data.expenses.filter(entry => entry.id !== item.id);
           persist();
         });
@@ -606,16 +597,6 @@
 
         toggle.type = "button";
         toggle.addEventListener("click", () => {
-          const action = isPaid
-            ? "desfazer o pagamento"
-            : (index === 0 || statuses.slice(0, index).every(Boolean)
-                ? "marcar esta parcela como paga"
-                : "antecipar esta parcela");
-
-          if (!confirm(`Confirma ${action} de ${money(amount)} (${index + 1}ª parcela)?`)) {
-            return;
-          }
-
           product.paidInstallments[index] = !product.paidInstallments[index];
           persist();
         });
@@ -629,10 +610,6 @@
       const remove = element("button", "btn-delete", "Excluir produto");
       remove.type = "button";
       remove.addEventListener("click", () => {
-        if (!confirm("Excluir este parcelamento? O crédito comprometido será liberado.")) {
-          return;
-        }
-
         data.products = data.products.filter(entry => entry.id !== product.id);
         persist();
       });
