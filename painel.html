@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+  <title>MoneyTrack | Painel</title>
+  <link rel="stylesheet" href="Painel.css">
+  <script src="Painel.js" defer></script>
+</head>
+<body>
+  <div id="appView">
+    <header class="dashboard-header">
+      <div>
+        <h1>MoneyTrack</h1>
+        <p>Controle suas finanças com inteligência.</p>
+      </div>
+      <div class="user-area">
+        <span id="userLabel">Meu painel</span>
+        <button id="logoutBtn" class="button button-secondary" type="button">Sair</button>
+      </div>
+    </header>
+
+    <main class="dashboard-container">
+      <section class="welcome">
+        <h2>Visão geral</h2>
+        <p>Acompanhe sua situação financeira.</p>
+      </section>
+
+      <section class="salary-card">
+        <h3>Minha renda mensal</h3>
+        <form id="salaryForm" class="finance-form">
+          <label class="field">
+            <span>Período</span>
+            <select id="periodo">
+              <option value="mensal">Mensal</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Renda (R$)</span>
+            <input type="number" id="salario" placeholder="Ex.: 2500,00" min="0" step="0.01" required>
+          </label>
+          <button id="saveSalary" class="button button-primary" type="submit">Salvar renda</button>
+        </form>
+        <h2 id="valorSalario">R$ 0,00</h2>
+      </section>
+
+      <section class="credit-card">
+        <h2>Meu limite de crédito</h2>
+        <p class="muted">O limite do cartão fica separado da sua renda mensal.</p>
+        <form id="creditLimitForm" class="finance-form">
+          <label class="field">
+            <span>Limite total (R$)</span>
+            <input type="number" id="limiteCredito" min="0" step="0.01" placeholder="Ex.: 2000,00" required>
+          </label>
+          <button class="button button-primary" type="submit">Salvar limite</button>
+        </form>
+
+        <div class="credit-summary">
+          <article>
+            <span>Limite total</span>
+            <strong id="limiteCreditoAtual">R$ 0,00</strong>
+          </article>
+          <article>
+            <span>Crédito utilizado</span>
+            <strong id="creditoUtilizado">R$ 0,00</strong>
+          </article>
+          <article>
+            <span>Disponível</span>
+            <strong id="creditoDisponivel">R$ 0,00</strong>
+          </article>
+        </div>
+
+        <!-- Gráfico exclusivo do limite de crédito -->
+        <div class="credit-chart-section">
+          <h3>Visualização do limite de crédito</h3>
+
+          <div id="graficoCredito" class="credit-donut">
+            <div class="credit-donut-center">
+              <span>Crédito disponível</span>
+              <strong id="graficoCreditoSaldo">R$ 0,00</strong>
+            </div>
+          </div>
+
+          <div class="credit-chart-legend">
+            <div>
+              <i class="dot credit-used-dot"></i>
+              <span>Crédito utilizado</span>
+              <strong id="legendaCreditoUtilizado">R$ 0,00</strong>
+            </div>
+
+            <div>
+              <i class="dot credit-available-dot"></i>
+              <span>Crédito disponível</span>
+              <strong id="legendaCreditoDisponivel">R$ 0,00</strong>
+            </div>
+          </div>
+        </div>
+
+        <p id="avisoLimiteCredito" role="status"></p>
+      </section>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <span>Salário</span>
+          <h2 id="totalPago">R$ 0,00</h2>
+        </article>
+        <article class="summary-card">
+          <span>Despesas do mês</span>
+          <h2 id="totalPendente">R$ 0,00</h2>
+        </article>
+        <article class="summary-card">
+          <span>Saldo restante</span>
+          <h2 id="saldoRestante">R$ 0,00</h2>
+        </article>
+      </section>
+
+      <section class="chart-card">
+        <div class="chart-heading">
+          <h2>Resumo do dinheiro</h2>
+          <p>Distribuição da sua renda neste mês.</p>
+        </div>
+        <div class="chart-content">
+          <div id="graficoFinanceiro" class="donut-chart">
+            <div class="donut-center">
+              <span>Saldo restante</span>
+              <strong id="graficoSaldo">R$ 0,00</strong>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div><i class="dot salary-dot"></i><span>Salário</span><strong id="legendaSalario">R$ 0,00</strong></div>
+            <div><i class="dot expense-dot"></i><span>Despesas do mês</span><strong id="legendaDespesas">R$ 0,00</strong></div>
+            <div><i class="dot balance-dot"></i><span>Saldo restante</span><strong id="legendaSaldo">R$ 0,00</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <nav class="dashboard-nav">
+        <button class="active" type="button" data-tab="painelDespesas">Despesas</button>
+        <button type="button" data-tab="painelParcelas">Parcelamentos</button>
+        <button type="button" data-tab="painelPrevisao">Previsão</button>
+      </nav>
+
+      <section id="painelDespesas" class="dashboard-panel">
+        <div class="panel-card">
+          <h2>Minhas despesas</h2>
+          <form id="expenseForm" class="finance-form">
+            <label class="field">
+              <span>Nome da despesa</span>
+              <input id="nomeDespesa" placeholder="Ex.: Internet" maxlength="80" required>
+            </label>
+            <label class="field">
+              <span>Valor (R$)</span>
+              <input id="valorDespesa" type="number" min="0.01" step="0.01" placeholder="Ex.: 120,00" required>
+            </label>
+            <label class="field">
+              <span>Data</span>
+              <input id="dataDespesa" type="date" required>
+            </label>
+            <button id="adicionarDespesa" class="button button-primary" type="submit">Adicionar despesa</button>
+          </form>
+          <div id="listaDespesas" class="finance-list"></div>
+        </div>
+      </section>
+
+      <section id="painelParcelas" class="dashboard-panel hidden">
+        <div class="panel-card">
+          <h2>Meus parcelamentos</h2>
+          <p class="muted">Cada compra compromete o valor total no limite. Você pode pagar qualquer parcela, inclusive antecipar meses futuros.</p>
+          <form id="installmentForm" class="finance-form">
+            <label class="field">
+              <span>Nome da compra</span>
+              <input id="nomeParcela" placeholder="Ex.: Notebook" maxlength="80" required>
+            </label>
+            <label class="field">
+              <span>Valor total (R$)</span>
+              <input id="valorTotalProduto" type="number" min="0.01" step="0.01" placeholder="Ex.: 2500,00" required>
+            </label>
+            <label class="field">
+              <span>Quantidade de parcelas</span>
+              <input id="quantidadeParcelas" type="number" min="1" max="120" step="1" placeholder="Ex.: 10" required>
+            </label>
+            <label class="field">
+              <span>Valor estimado de cada parcela (R$)</span>
+              <input id="valorParcela" type="number" min="0.01" step="0.01" placeholder="Calculado automaticamente" readonly>
+            </label>
+            <label class="field">
+              <span>Data da primeira parcela</span>
+              <input id="dataPrimeiraParcela" type="date" required>
+            </label>
+            <button id="adicionarParcela" class="button button-primary" type="submit">Adicionar parcelamento</button>
+          </form>
+          <div id="listaParcelas" class="finance-list"></div>
+        </div>
+      </section>
+
+      <section id="painelPrevisao" class="dashboard-panel hidden">
+        <div class="panel-card">
+          <h2>Previsão financeira</h2>
+          <p class="muted">Estimativa das despesas e do saldo previsto para o mês atual.</p>
+          <div id="listaPrevisao" class="forecast-grid"></div>
+        </div>
+      </section>
+
+      <p class="storage-note">Seus dados ficam salvos neste navegador e neste dispositivo.</p>
+    </main>
+  </div>
+</body>
+</html>
