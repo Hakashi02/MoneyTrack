@@ -312,6 +312,40 @@ button, input, select {
   background: #22c55e;
 }
 
+/* Legenda dos produtos do limite de crédito */
+
+.chart-items-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 22px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.chart-items-legend li {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.chart-items-legend li strong {
+  color: #fff;
+  white-space: nowrap;
+}
+
+.chart-item-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 /* Gráfico independente do limite de crédito */
 
 .credit-chart-section {
@@ -372,11 +406,11 @@ button, input, select {
   flex-direction: column;
   gap: 15px;
   width: 100%;
-  max-width: 300px;
+  max-width: 350px;
   margin-top: 25px;
 }
 
-.credit-chart-legend div {
+.credit-chart-legend > div {
   display: grid;
   grid-template-columns: 12px 1fr auto;
   align-items: center;
