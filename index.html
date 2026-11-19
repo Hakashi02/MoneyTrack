@@ -1,126 +1,1105 @@
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+
   <title>MoneyTrack</title>
+
   <link rel="stylesheet" href="Estilo.css">
+  <link rel="stylesheet" href="Painel.css">
 </head>
+
 <body>
 
+  <!-- =====================================
+       LOGIN E CADASTRO
+  ====================================== -->
+
   <main id="authView" class="auth-shell">
+
     <section class="auth-card">
 
       <div class="brand-mark">M</div>
+
       <h1>MoneyTrack</h1>
-      <p class="auth-description">Organize sua vida financeira com inteligência.</p>
+
+      <p class="auth-description">
+        Organize sua vida financeira com inteligência.
+      </p>
 
       <div class="auth-tabs">
-        <button type="button" id="tabLogin" class="auth-tab active">Entrar</button>
-        <button type="button" id="tabCadastro" class="auth-tab">Criar conta</button>
+        <button type="button" id="tabLogin" class="auth-tab active">
+          Entrar
+        </button>
+
+        <button type="button" id="tabCadastro" class="auth-tab">
+          Criar conta
+        </button>
       </div>
 
       <form id="authForm">
+
         <div id="nomeWrap" class="field hidden">
           <label for="nomeConta">Nome completo</label>
-          <input type="text" id="nomeConta" placeholder="Digite seu nome" autocomplete="name">
+          <input
+            type="text"
+            id="nomeConta"
+            placeholder="Digite seu nome"
+            autocomplete="name"
+          >
         </div>
 
         <div class="field">
           <label for="email">E-mail</label>
-          <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" required>
+          <input
+            type="email"
+            id="email"
+            placeholder="seu@email.com"
+            autocomplete="email"
+            required
+          >
         </div>
 
         <div class="field">
           <label for="senha">Senha</label>
-          <input type="password" id="senha" placeholder="Digite sua senha" minlength="6" required>
+          <input
+            type="password"
+            id="senha"
+            placeholder="Digite sua senha"
+            minlength="6"
+            required
+          >
         </div>
 
         <div id="confirmarSenhaWrap" class="field hidden">
           <label for="confirmarSenha">Confirmar senha</label>
-          <input type="password" id="confirmarSenha" placeholder="Digite a senha novamente" minlength="6">
+          <input
+            type="password"
+            id="confirmarSenha"
+            placeholder="Digite a senha novamente"
+            minlength="6"
+          >
         </div>
 
-        <button type="submit" id="authSubmit" class="primary">Entrar na minha conta</button>
+        <button type="submit" id="authSubmit" class="primary">
+          Entrar na minha conta
+        </button>
+
         <p id="authMessage" class="message" role="status"></p>
+
       </form>
 
-      <div class="login-divider"><span>OU CONTINUE COM</span></div>
+      <div class="login-divider">
+        <span>OU CONTINUE COM</span>
+      </div>
 
       <button type="button" id="googleLogin" class="social-btn">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
+        <img
+          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+          alt=""
+        >
         Continuar com Google
       </button>
 
       <button type="button" id="appleLogin" class="social-btn">
-        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v14/icons/apple.svg" alt="">
+        <img
+          src="https://cdn.jsdelivr.net/npm/simple-icons@v14/icons/apple.svg"
+          alt=""
+        >
         Continuar com Apple
       </button>
 
       <p class="auth-footer">
-        <span id="authFooterText">Ainda não tem uma conta?</span>
-        <button type="button" id="footerToggle">Criar conta</button>
+        <span id="authFooterText">
+          Ainda não tem uma conta?
+        </span>
+
+        <button type="button" id="footerToggle">
+          Criar conta
+        </button>
       </p>
 
     </section>
   </main>
 
+
+  <!-- =====================================
+       PAINEL FINANCEIRO DO USUÁRIO
+  ====================================== -->
+
   <main id="appView" class="hidden">
+
+    <div class="dashboard">
+
+      <!-- CABEÇALHO -->
+
+      <header class="dashboard-header">
+
+        <div class="dashboard-brand">
+          <div class="brand-mark">M</div>
+
+          <div>
+            <h1>Money<span>Track</span></h1>
+            <p class="dashboard-subtitle">
+              Seu controle financeiro em um só lugar.
+            </p>
+          </div>
+        </div>
+
+        <div class="dashboard-user">
+
+          <div class="user-avatar" id="userAvatar">U</div>
+
+          <div class="user-info">
+            <strong id="userLabel">Minha conta</strong>
+            <small>Conta pessoal</small>
+          </div>
+
+          <button type="button" id="logoutBtn" class="finance-button secondary">
+            Sair
+          </button>
+
+        </div>
+
+      </header>
+
+
+      <!-- NAVEGAÇÃO PRINCIPAL -->
+
+      <nav class="dashboard-nav" aria-label="Menu financeiro">
+
+        <button type="button" class="active" data-tab="painelVisaoGeral">
+          Visão geral
+        </button>
+
+        <button type="button" id="abaSalario" data-tab="painelSalario">
+          Salário
+        </button>
+
+        <button type="button" id="abaEntradas" data-tab="painelEntradas">
+          Entradas
+        </button>
+
+        <button type="button" id="abaSaidas" data-tab="painelSaidas">
+          Saídas
+        </button>
+
+        <button type="button" id="abaDespesas" data-tab="painelDespesas">
+          Despesas
+        </button>
+
+        <button type="button" id="abaParcelas" data-tab="painelParcelas">
+          Parcelas
+        </button>
+
+        <button type="button" id="abaCalendario" data-tab="painelCalendario">
+          Calendário
+        </button>
+
+        <button type="button" id="abaHistorico" data-tab="painelHistorico">
+          Histórico
+        </button>
+
+        <button type="button" id="abaPrevisao" data-tab="painelPrevisao">
+          Previsão
+        </button>
+
+      </nav>
+
+
+      <!-- =================================
+           VISÃO GERAL
+      ================================== -->
+
+      <section id="painelVisaoGeral" class="dashboard-panel active">
+
+        <div class="section-heading">
+          <h2>Visão geral</h2>
+          <p>Acompanhe sua situação financeira.</p>
+        </div>
+
+        <div class="panel-card">
+
+          <label for="periodo">Período de visualização</label>
+
+          <select id="periodo">
+            <option value="dia">Hoje</option>
+            <option value="mes" selected>Este mês</option>
+            <option value="ano">Este ano</option>
+          </select>
+
+        </div>
+
+        <div class="summary-grid">
+
+          <div class="summary-card">
+            <span class="card-label">Saldo disponível</span>
+            <strong class="card-value value-blue" id="saldoRestante">
+              R$ 0,00
+            </strong>
+            <small class="card-description">
+              Saldo calculado da sua conta
+            </small>
+          </div>
+
+          <div class="summary-card">
+            <span class="card-label">Total de entradas</span>
+            <strong class="card-value value-positive" id="totalEntradas">
+              R$ 0,00
+            </strong>
+            <small class="card-description">
+              Dinheiro recebido
+            </small>
+          </div>
+
+          <div class="summary-card">
+            <span class="card-label">Total de saídas</span>
+            <strong class="card-value value-negative" id="totalSaidas">
+              R$ 0,00
+            </strong>
+            <small class="card-description">
+              Dinheiro gasto
+            </small>
+          </div>
+
+          <div class="summary-card">
+            <span class="card-label">Salário mensal</span>
+            <strong class="card-value" id="valorSalario">
+              R$ 0,00
+            </strong>
+            <small class="card-description">
+              Salário cadastrado
+            </small>
+          </div>
+
+        </div>
+
+        <div class="panel-grid">
+
+          <section class="panel-card">
+            <h3>Últimas movimentações</h3>
+
+            <div id="listaUltimasMovimentacoes" class="finance-list">
+              <div class="empty-state">
+                Suas movimentações aparecerão aqui.
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card">
+            <h3>Próximos vencimentos</h3>
+
+            <div id="listaProximosVencimentos" class="finance-list">
+              <div class="empty-state">
+                Nenhuma conta cadastrada.
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           SALÁRIO
+      ================================== -->
+
+      <section id="painelSalario" class="dashboard-panel">
+
+        <div class="section-heading">
+          <h2>Meu salário</h2>
+          <p>Configure seu pagamento mensal.</p>
+        </div>
+
+        <div class="panel-grid">
+
+          <section class="panel-card">
+
+            <h3>Configurar salário</h3>
+
+            <form id="formSalario" class="finance-form">
+
+              <div>
+                <label for="salario">Valor do salário (R$)</label>
+                <input
+                  type="number"
+                  id="salario"
+                  min="0"
+                  step="0.01"
+                  placeholder="Ex.: 2500,00"
+                  required
+                >
+              </div>
+
+              <div>
+                <label for="dataPagamentoSalario">
+                  Dia do pagamento
+                </label>
+                <input
+                  type="number"
+                  id="dataPagamentoSalario"
+                  min="1"
+                  max="31"
+                  placeholder="Ex.: 5"
+                  required
+                >
+              </div>
+
+              <div>
+                <label for="primeiroPagamento">
+                  Data do próximo pagamento
+                </label>
+                <input type="date" id="primeiroPagamento" required>
+              </div>
+
+              <div>
+                <label for="descricaoSalario">Descrição</label>
+                <input
+                  type="text"
+                  id="descricaoSalario"
+                  placeholder="Ex.: Salário mensal"
+                >
+              </div>
+
+              <button type="submit" id="saveSalary" class="finance-button">
+                Salvar salário
+              </button>
+
+            </form>
+
+            <p id="mensagemSalario" class="finance-message" role="status"></p>
+
+          </section>
+
+          <section class="panel-card">
+
+            <h3>Resumo do salário</h3>
+
+            <div class="finance-list">
+
+              <div class="finance-item">
+                <strong>Salário cadastrado</strong>
+                <strong id="resumoSalario">R$ 0,00</strong>
+              </div>
+
+              <div class="finance-item">
+                <strong>Próximo pagamento</strong>
+                <strong id="resumoDataPagamento">Não informado</strong>
+              </div>
+
+              <div class="finance-item">
+                <strong>Total recebido</strong>
+                <strong id="totalPago">R$ 0,00</strong>
+              </div>
+
+            </div>
+
+            <h3>Histórico de pagamentos</h3>
+
+            <div id="historicoSalario" class="finance-list">
+              <div class="empty-state">
+                Nenhum pagamento registrado.
+              </div>
+            </div>
+
+          </section>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           ENTRADAS
+      ================================== -->
+
+      <section id="painelEntradas" class="dashboard-panel">
+
+        <div class="section-heading">
+          <h2>Minhas entradas</h2>
+          <p>Registre todo dinheiro que você receber.</p>
+        </div>
+
+        <div class="panel-grid">
+
+          <section class="panel-card">
+
+            <h3>Adicionar entrada</h3>
+
+            <form id="formEntrada" class="finance-form">
+
+              <div>
+                <label for="entradaDescricao">Descrição</label>
+                <input
+                  type="text"
+                  id="entradaDescricao"
+                  placeholder="Ex.: Serviço realizado"
+                  required
+                >
+              </div>
+
+              <div>
+                <label for="entradaValor">Valor recebido (R$)</label>
+                <input
+                  type="number"
+                  id="entradaValor"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="0,00"
+                  required
+                >
+              </div>
+
+              <div>
+                <label for="entradaData">Data do recebimento</label>
+                <input type="date" id="entradaData" required>
+              </div>
+
+              <div>
+                <label for="entradaCategoria">Categoria</label>
+                <select id="entradaCategoria" required>
+                  <option value="">Selecione</option>
+                  <option value="Salário">Salário</option>
+                  <option value="Serviços">Serviços</option>
+                  <option value="Pix">Pix recebido</option>
+                  <option value="Vendas">Vendas</option>
+                  <option value="Investimentos">Investimentos</option>
+                  <option value="Outros">Outros</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="entradaSentimento">Como você se sente?</label>
+                <select id="entradaSentimento">
+                  <option value="">Não informar</option>
+                  <option value="Feliz">Feliz</option>
+                  <option value="Tranquilo">Tranquilo</option>
+                  <option value="Satisfeito">Satisfeito</option>
+                  <option value="Preocupado">Preocupado</option>
+                  <option value="Ansioso">Ansioso</option>
+                </select>
+              </div>
+
+              <button type="submit" class="finance-button">
+                Registrar entrada
+              </button>
+
+            </form>
+
+            <p id="mensagemEntrada" class="finance-message" role="status"></p>
+
+          </section>
+
+          <section class="panel-card">
+            <h3>Entradas registradas</h3>
+
+            <div id="listaEntradas" class="finance-list">
+              <div class="empty-state">
+                Nenhuma entrada registrada.
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           SAÍDAS
+      ================================== -->
+
+      <section id="painelSaidas" class="dashboard-panel">
+
+        <div class="section-heading">
+          <h2>Minhas saídas</h2>
+          <p>Controle tudo que você gastou ou pagou.</p>
+        </div>
+
+        <div class="panel-grid">
+
+          <section class="panel-card">
+
+            <h3>Adicionar saída</h3>
+
+            <form id="formSaida" class="finance-form">
+
+              <div>
+                <label for="saidaDescricao">Descrição</label>
+                <input
+                  type="text"
+                  id="saidaDescricao"
+                  placeholder="Ex.: Compra no mercado"
+                  required
+                >
+              </div>
+
+              <div>
+                <label for="saidaValor">Valor gasto (R$)</label>
+                <input
+                  type="number"
+                  id="saidaValor"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="0,00"
+                  required
+                >
+              </div>
+
+              <div>
+                <label for="saidaData">Data do gasto</label>
+                <input type="date" id="saidaData" required>
+              </div>
+
+              <div>
+                <label for="saidaCategoria">Categoria</label>
+                <select id="saidaCategoria" required>
+                  <option value="">Selecione</option>
+                  <option value="Alimentação">Alimentação</option>
+                  <option value="Moradia">Moradia</option>
+                  <option value="Transporte">Transporte</option>
+                  <option value="Lazer">Lazer</option>
+                  <option value="Saúde">Saúde</option>
+                  <option value="Compras">Compras</option>
+                  <option value="Educação">Educação</option>
+                  <option value="Outros">Outros</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="saidaSentimento">Como você se sente?</label>
+                <select id="saidaSentimento">
+                  <option value="">Não informar</option>
+                  <option value="Feliz">Feliz</option>
+                  <option value="Tranquilo">Tranquilo</option>
+                  <option value="Preocupado">Preocupado</option>
+                  <option value="Ansioso">Ansioso</option>
+                  <option value="Arrependido">Arrependido</option>
+                  <option value="Satisfeito">Satisfeito</option>
+                </select>
+              </div>
+
+              <button type="submit" class="finance-button">
+                Registrar saída
+              </button>
+
+            </form>
+
+            <p id="mensagemSaida" class="finance-message" role="status"></p>
+
+          </section>
+
+          <section class="panel-card">
+            <h3>Saídas registradas</h3>
+
+            <div id="listaSaidas" class="finance-list">
+              <div class="empty-state">
+                Nenhuma saída registrada.
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           DESPESAS
+      ================================== -->
+
+      <section id="painelDespesas" class="dashboard-panel">
+
+        <div class="section-heading">
+          <h2>Despesas e contas</h2>
+          <p>Organize suas contas e acompanhe os vencimentos.</p>
+        </div>
+
+        <div class="panel-grid">
+
+          <section class="panel-card">
+
+            <h3>Cadastrar despesa</h3>
+
+            <form id="formDespesa" class="finance-form">
+
+              <div>
+                <label for="despesaDescricao">Nome da despesa</label>
+                <input
+                  type="text"
+                  id="despesaDescricao"
+                  placeholder="Ex.: Conta de internet"
+                  required
+                >
+              </div>
+
+              <div>
+                <label for="despesaValor">Valor (R$)</label>
+                <input
+                  type="number"
+                  id="despesaValor"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="0,00"
+                  required
+                >
+              </div>
+
+              <div>
+                <label for="despesaVencimento">Data de vencimento</label>
+                <input type="date" id="despesaVencimento" required>
+              </div>
+
+              <div>
+                <label for="despesaCategoria">Categoria</label>
+                <select id="despesaCategoria" required>
+                  <option value="">Selecione</option>
+                  <option value="Moradia">Moradia</option>
+                  <option value="Água">Água</option>
+                  <option value="Energia">Energia</option>
+                  <option value="Internet">Internet</option>
+                  <option value="Telefone">Telefone</option>
+                  <option value="Cartão">Cartão</option>
+                  <option value="Transporte">Transporte</option>
+                  <option value="Outros">Outros</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="despesaStatus">Situação</label>
+                <select id="despesaStatus">
+                  <option value="pendente">Pendente</option>
+                  <option value="pago">Pago</option>
+                </select>
+              </div>
+
+              <button type="submit" class="finance-button">
+                Salvar despesa
+              </button>
+
+            </form>
+
+            <p id="mensagemDespesa" class="finance-message" role="status"></p>
+
+          </section>
+
+          <section class="panel-card">
+
+            <h3>Minhas despesas</h3>
+
+            <div id="listaDespesas" class="finance-list">
+              <div class="empty-state">
+                Nenhuma despesa cadastrada.
+              </div>
+            </div>
+
+            <div class="finance-item">
+              <strong>Total pendente</strong>
+              <strong id="totalPendente" class="value-negative">
+                R$ 0,00
+              </strong>
+            </div>
+
+          </section>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           PARCELAS
+      ================================== -->
+
+      <section id="painelParcelas" class="dashboard-panel">
+
+        <div class="section-heading">
+          <h2>Minhas parcelas</h2>
+          <p>Organize suas compras parceladas e acompanhe as faturas.</p>
+        </div>
+
+        <div class="panel-grid">
+
+          <section class="panel-card">
+
+            <h3>Adicionar compra parcelada</h3>
+
+            <form id="formParcela" class="finance-form">
+
+              <div>
+                <label for="parcelaProduto">Nome do produto</label>
+                <input
+                  type="text"
+                  id="parcelaProduto"
+                  placeholder="Ex.: Celular"
+                  required
+                >
+              </div>
+
+              <div>
+                <label for="parcelaValorTotal">Valor total da compra (R$)</label>
+                <input
+                  type="number"
+                  id="parcelaValorTotal"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="0,00"
+                  required
+                >
+              </div>
+
+              <div>
+                <label for="parcelaQuantidade">Quantidade de parcelas</label>
+                <select id="parcelaQuantidade" required>
+                  <option value="">Selecione</option>
+                  <option value="1">1 vez</option>
+                  <option value="2">2 vezes</option>
+                  <option value="3">3 vezes</option>
+                  <option value="4">4 vezes</option>
+                  <option value="5">5 vezes</option>
+                  <option value="6">6 vezes</option>
+                  <option value="8">8 vezes</option>
+                  <option value="10">10 vezes</option>
+                  <option value="12">12 vezes</option>
+                  <option value="15">15 vezes</option>
+                  <option value="18">18 vezes</option>
+                  <option value="24">24 vezes</option>
+                  <option value="36">36 vezes</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="parcelaDataCompra">Data da compra</label>
+                <input type="date" id="parcelaDataCompra" required>
+              </div>
+
+              <div>
+                <label for="parcelaPrimeiroVencimento">
+                  Primeiro vencimento
+                </label>
+                <input type="date" id="parcelaPrimeiroVencimento" required>
+              </div>
+
+              <div>
+                <label for="parcelaMetodo">Forma de pagamento</label>
+                <select id="parcelaMetodo">
+                  <option value="Cartão de crédito">Cartão de crédito</option>
+                  <option value="Cartão de débito">Cartão de débito</option>
+                  <option value="Boleto">Boleto</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="parcelaObservacao">Observações</label>
+                <textarea
+                  id="parcelaObservacao"
+                  placeholder="Informações adicionais (opcional)"
+                ></textarea>
+              </div>
+
+              <button type="submit" class="finance-button">
+                Adicionar parcelamento
+              </button>
+
+            </form>
+
+            <p id="mensagemParcela" class="finance-message" role="status"></p>
+
+          </section>
+
+          <section class="panel-card">
+
+            <h3>Resumo dos parcelamentos</h3>
+
+            <div class="finance-list">
+
+              <div class="finance-item">
+                <strong>Total de compras</strong>
+                <strong id="totalComprasParceladas">R$ 0,00</strong>
+              </div>
+
+              <div class="finance-item">
+                <strong>Parcelas restantes</strong>
+                <strong id="quantidadeParcelasRestantes">0</strong>
+              </div>
+
+              <div class="finance-item">
+                <strong>Compromisso mensal</strong>
+                <strong id="totalParcelasMensais">R$ 0,00</strong>
+              </div>
+
+            </div>
+
+            <h3>Minhas compras</h3>
+
+            <div id="listaParcelas" class="finance-list">
+              <div class="empty-state">
+                Nenhuma compra parcelada cadastrada.
+              </div>
+            </div>
+
+          </section>
+
+        </div>
+
+        <section class="panel-card">
+
+          <h3>Faturas por mês</h3>
+
+          <p class="dashboard-subtitle">
+            Veja quais compras estarão presentes em cada mês.
+          </p>
+
+          <div>
+            <label for="mesFatura">Selecionar mês</label>
+            <input type="month" id="mesFatura">
+          </div>
+
+          <div id="listaFaturaMensal" class="finance-list">
+            <div class="empty-state">
+              Suas parcelas futuras aparecerão aqui.
+            </div>
+          </div>
+
+        </section>
+
+      </section>
+
+
+      <!-- =================================
+           CALENDÁRIO
+      ================================== -->
+
+      <section id="painelCalendario" class="dashboard-panel">
+
+        <div class="section-heading">
+          <h2>Calendário financeiro</h2>
+          <p>Visualize pagamentos, recebimentos e vencimentos.</p>
+        </div>
+
+        <section class="panel-card">
+
+          <div class="panel-grid">
+
+            <div>
+              <label for="calendarioMes">Escolher mês</label>
+              <input type="month" id="calendarioMes">
+            </div>
+
+            <div>
+              <label for="calendarioFiltro">Filtrar eventos</label>
+              <select id="calendarioFiltro">
+                <option value="todos">Todos</option>
+                <option value="entrada">Entradas</option>
+                <option value="saida">Saídas</option>
+                <option value="despesa">Despesas</option>
+                <option value="parcela">Parcelas</option>
+                <option value="salario">Salário</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div id="calendarioGrid" class="calendar-grid">
+            <div class="empty-state">
+              O calendário será carregado aqui.
+            </div>
+          </div>
+
+        </section>
+
+        <section class="panel-card">
+
+          <h3>Eventos do mês</h3>
+
+          <div id="listaEventosCalendario" class="finance-list">
+            <div class="empty-state">
+              Nenhum evento cadastrado.
+            </div>
+          </div>
+
+        </section>
+
+      </section>
+
+
+      <!-- =================================
+           HISTÓRICO
+      ================================== -->
+
+      <section id="painelHistorico" class="dashboard-panel">
+
+        <div class="section-heading">
+          <h2>Histórico financeiro</h2>
+          <p>Consulte suas movimentações e registros.</p>
+        </div>
+
+        <section class="panel-card">
+
+          <div class="panel-grid">
+
+            <div>
+              <label for="historicoFiltro">Tipo de movimentação</label>
+              <select id="historicoFiltro">
+                <option value="todos">Todas</option>
+                <option value="entrada">Entradas</option>
+                <option value="saida">Saídas</option>
+                <option value="despesa">Despesas</option>
+                <option value="parcela">Parcelas</option>
+                <option value="salario">Salários</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="historicoMes">Mês</label>
+              <input type="month" id="historicoMes">
+            </div>
+
+          </div>
+
+          <div id="listaHistorico" class="finance-list">
+            <div class="empty-state">
+              Seu histórico aparecerá aqui.
+            </div>
+          </div>
+
+        </section>
+
+      </section>
+
+
+      <!-- =================================
+           PREVISÃO FINANCEIRA
+      ================================== -->
+
+      <section id="painelPrevisao" class="dashboard-panel">
+
+        <div class="section-heading">
+          <h2>Previsão financeira</h2>
+          <p>Veja os compromissos e recebimentos futuros.</p>
+        </div>
+
+        <div class="summary-grid">
+
+          <div class="summary-card">
+            <span class="card-label">Entradas previstas</span>
+            <strong id="previsaoEntradas" class="card-value value-positive">
+              R$ 0,00
+            </strong>
+          </div>
+
+          <div class="summary-card">
+            <span class="card-label">Saídas previstas</span>
+            <strong id="previsaoSaidas" class="card-value value-negative">
+              R$ 0,00
+            </strong>
+          </div>
+
+          <div class="summary-card">
+            <span class="card-label">Parcelas futuras</span>
+            <strong id="previsaoParcelas" class="card-value">
+              R$ 0,00
+            </strong>
+          </div>
+
+          <div class="summary-card">
+            <span class="card-label">Saldo projetado</span>
+            <strong id="previsaoSaldo" class="card-value value-blue">
+              R$ 0,00
+            </strong>
+          </div>
+
+        </div>
+
+        <section class="panel-card">
+
+          <h3>Próximos meses</h3>
+
+          <div id="listaPrevisao" class="finance-list">
+            <div class="empty-state">
+              Suas previsões aparecerão aqui.
+            </div>
+          </div>
+
+        </section>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- =====================================
+       PAINEL ADMINISTRATIVO
+  ====================================== -->
+
+  <main id="adminView" class="hidden">
+
     <header class="topbar">
-      <h1>MoneyTrack</h1>
+
+      <h1>MoneyTrack | Administração</h1>
+
       <div>
-        <span id="userLabel"></span>
-        <button type="button" id="logoutBtn">Sair</button>
+        <span id="adminLabel">Administrador</span>
+
+        <button type="button" id="adminLogoutBtn">
+          Sair
+        </button>
       </div>
+
     </header>
 
     <section class="container">
+
       <div class="panel">
-        <h2>Resumo financeiro</h2>
-        <label for="periodo">Período</label>
-        <select id="periodo">
-          <option value="dia">Dia</option>
-          <option value="mes" selected>Mês</option>
-          <option value="ano">Ano</option>
-        </select>
-        <label for="salario">Salário</label>
-        <input type="number" id="salario" placeholder="0,00">
-        <button type="button" id="saveSalary">Salvar salário</button>
+        <h2>Painel administrativo</h2>
+        <p>Gerenciamento de usuários do MoneyTrack.</p>
       </div>
 
       <div class="summary-grid">
-        <div class="panel"><h3>Salário</h3><p id="valorSalario">R$ 0,00</p></div>
-        <div class="panel"><h3>Total pago</h3><p id="totalPago">R$ 0,00</p></div>
-        <div class="panel"><h3>Total pendente</h3><p id="totalPendente">R$ 0,00</p></div>
-        <div class="panel"><h3>Saldo restante</h3><p id="saldoRestante">R$ 0,00</p></div>
+
+        <div class="panel">
+          <h3>Total de usuários</h3>
+          <p id="adminTotalUsuarios">0</p>
+        </div>
+
       </div>
 
-      <nav class="app-tabs">
-        <button type="button" id="abaDespesas">Despesas</button>
-        <button type="button" id="abaParcelas">Parcelas</button>
-        <button type="button" id="abaPrevisao">Previsão</button>
-      </nav>
+      <div class="panel">
 
-      <section id="painelDespesas" class="panel">
-        <h2>Despesas</h2>
-        <div id="listaDespesas"></div>
-      </section>
+        <h2>Usuários cadastrados</h2>
 
-      <section id="painelParcelas" class="panel hidden">
-        <h2>Parcelas</h2>
-        <div id="listaParcelas"></div>
-      </section>
+        <div id="adminListaUsuarios">
+          Aguardando carregamento dos usuários...
+        </div>
 
-      <section id="painelPrevisao" class="panel hidden">
-        <h2>Previsão financeira</h2>
-        <div id="listaPrevisao"></div>
-      </section>
+        <p id="adminMessage" class="message" role="status"></p>
+
+      </div>
+
     </section>
+
   </main>
 
+
+  <!-- =====================================
+       BIBLIOTECAS E ARQUIVOS JAVASCRIPT
+  ====================================== -->
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script src="Config.js"></script>
+
   <script src="JScript.js"></script>
+
+  <!-- O Painel.js será criado na próxima etapa. -->
+
 </body>
 </html>
